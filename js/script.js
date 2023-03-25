@@ -3,11 +3,9 @@
 // Не старайся быть не таким как все, все хотят быть не такими как все.
 
 
-// Флаг на первое открытие для рендера заглушки на загрузку комментариев
-let isFirstOpen = true;
-const commentsList = document.querySelector('ul.comments');
+// Рисую лоадер на период загрузки комментариев
 let comments = [];
-renderComments();
+renderComments(1);
 
 // Достаю комментарии с сервера
 function getComments() {
@@ -20,15 +18,7 @@ function getComments() {
 }
 getComments();
 
-// Форма
-const addForm = document.querySelector('div.add-form');
-
-// Массив с данными о комментариях
-// Пока оставляю, чтобы не лезли ошибки
-const commentsListArray = [];
-
 // Функция преобразует дату из строки используется в рендер функции
-// Работает, но мне не нравится как написана 
 function getDate(date) {
     const options = {
         year: '2-digit',
@@ -42,7 +32,8 @@ function getDate(date) {
 }
 
 // Функция рисует HTML-разметку всех комментариев
-function renderComments() {
+function renderComments(isFirstOpen = 0) {
+    const commentsList = document.querySelector('ul.comments');
     if (isFirstOpen) {
         isFirstOpen = false;
         commentsList.innerHTML = `
@@ -84,24 +75,12 @@ function renderComments() {
 }
 
 // Рендер формы добавления комментария
-let loadingStatus = 0; // 0 - ничего не загружается (по умолчанию); 1 - комментарий загружается на сервер;
+// 0 - ничего не загружается(по умолчанию); 1 - комментарий загружается на сервер;
 // 2 - комментарий загружается от сервера на клиент  
+function renderForm(loadingStatus) {
+    const addForm = document.querySelector('div.add-form');
 
-function renderForm() {
     switch (loadingStatus) {
-        case 0:
-            addForm.innerHTML = `    
-            <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
-            <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
-            id="input-comment"></textarea>
-            <div class="add-form-row">
-                <button class="add-form-button" id="button-add-comment">Написать</button>
-            </div>`;
-            // Добавляю событие на клик по добавить комментарий
-            const buttonAddComment = document.querySelector('button.add-form-button');
-            buttonAddComment.addEventListener('click', addComment);
-            break;
-
         case 1:
             addForm.innerHTML = ` 
             <div style="display: flex;">
@@ -122,9 +101,18 @@ function renderForm() {
             </div>
             `
             break;
+
+        default: addForm.innerHTML = `    
+            <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
+            <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+            id="input-comment"></textarea>
+            <div class="add-form-row">
+                <button class="add-form-button" id="button-add-comment">Написать</button>
+            </div>`;
+            // Добавляю событие на клик по кнопке добавить
+            const buttonAddComment = document.querySelector('button.add-form-button');
+            buttonAddComment.addEventListener('click', addComment);
     }
-
-
 }
 renderForm();
 
@@ -208,15 +196,15 @@ function like(index) {
 // Функциия редактировать
 function edit(index) {
 
-    if (commentsListArray[index].isEdit === false) {
-        commentsListArray[index].isEdit = true;
+    if (comments[index].isEdit === false) {
+        comments[index].isEdit = true;
     } else {
         // Нахожу textarea
-        let currentTextarea = commentsList.querySelectorAll('.comment')[index].querySelector('textarea');
+        let currentTextarea = document.querySelectorAll('.comment')[index].querySelector('textarea');
 
         if (currentTextarea.value !== '') {
-            commentsListArray[index].isEdit = false;
-            commentsListArray[index].text = safeInput(currentTextarea.value);
+            comments[index].isEdit = false;
+            comments[index].text = safeInput(currentTextarea.value);
         }
     }
 
@@ -224,7 +212,7 @@ function edit(index) {
 }
 
 // Добавить комментарий при нажатии Enter
-addForm.addEventListener('keyup', (e) => {
+document.addEventListener('keyup', (e) => {
     if (e.code == 'Enter') addComment();
 });
 
@@ -246,7 +234,6 @@ function addComment() {
         inputComment.placeholder = 'Введите ваш комментарий';
     }
 
-
     if (inputName.value === '') {
         inputName.classList.add('error__name');
         inputName.placeholder = 'Поле не может быть пустым!';
@@ -262,8 +249,7 @@ function addComment() {
 
     } else {
         // Заглушка на время отправки коммента на сервер
-        loadingStatus = 1;
-        renderForm();
+        renderForm(1);
 
         fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments', {
             method: "POST",
@@ -278,13 +264,11 @@ function addComment() {
 
         }).then(response => {
             response.json().then(message => console.log(message));
-            loadingStatus = 2;
-            renderForm();
+            renderForm(2);
             return getComments();
 
         }).then((responseData) => {
             console.log(responseData);
-            loadingStatus = 0;
             renderForm();
         });
 
