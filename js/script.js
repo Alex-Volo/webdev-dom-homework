@@ -44,6 +44,7 @@ function renderComments(isFirstOpen = 0) {
         <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
         </svg>
         </li>`;
+
     } else {
         commentsList.innerHTML = comments.reduce((result, comment, index) => {
             return result + `
@@ -56,7 +57,7 @@ function renderComments(isFirstOpen = 0) {
         </div >
         <div class="comment-body">
         <div class="comment-text">   
-            ${comment.text}            
+            ${makeQuote(comment.text)}            
         </div>
         </div>
         <div class="comment-footer">
@@ -133,15 +134,9 @@ function addListenerOnComments() {
             // if (e.target === editButton) { edit(index); return; }
             if (e.target === deleteButton) { deleteComment(index); return }
 
-            // replyComment(index);
+            replyComment(index);
         })
     }
-}
-
-// Функция делает цитаты
-function makeQuote(str) {
-    return str.replaceAll('QUOTE_BEGIN', '<blockquote class="blockquote">')
-        .replaceAll('QUOTE_END', '</blockquote>');
 }
 
 // Функция обезопасить пользовательский ввод
@@ -153,12 +148,18 @@ function safeInput(str) {
 }
 
 // Функция ответить на комментарий
-// Пока побудет закоменченной, ибо нех..
-/*function replyComment(index) {
-    inputComment.value = 'QUOTE_BEGIN >' + comments[index].text +
-        '\n' + comments[index].name + '< QUOTE_END';
+function replyComment(index) {
+    const inputComment = document.querySelector('.add-form-text');
+    inputComment.value = '⟪' + comments[index].text +
+        '\n' + comments[index].author.name + '⟫';
     renderComments();
-}*/
+}
+
+// Функция делает цитаты
+function makeQuote(str) {
+    return str.replaceAll('⟪', '<blockquote class="blockquote">')
+        .replaceAll('⟫', '</blockquote>');
+}
 
 // Функция удалить комментарий
 function deleteComment(index) {
@@ -216,20 +217,16 @@ document.addEventListener('keyup', (e) => {
     if (e.code == 'Enter') addComment();
 });
 
-
-
 // Функция добавляет комментарий
 function addComment() {
     const inputName = document.querySelector('input.add-form-name');
-    const inputComment = document.querySelector('div.add-form > textarea.add-form-text');
+    const inputComment = document.querySelector('.add-form-text');
     const currentDate = new Date;
 
     // Таймаут красного фона на полях
-    function clearInputName() {
+    function clearInputs() {
         inputName.classList.remove('error__name')
         inputName.placeholder = 'Введите ваше имя';
-    }
-    function clearInputComment() {
         inputComment.classList.remove('error__name')
         inputComment.placeholder = 'Введите ваш комментарий';
     }
@@ -237,15 +234,14 @@ function addComment() {
     if (inputName.value === '') {
         inputName.classList.add('error__name');
         inputName.placeholder = 'Поле не может быть пустым!';
-        inputName.value = '';
         inputComment.value = '';
-        setTimeout(clearInputName, 1500);
+        setTimeout(clearInputs, 1500);
 
     } else if (inputComment.value === '' || inputComment.value === '\n') {
         inputComment.classList.add('error__name');
         inputComment.placeholder = 'Поле не может быть пустым!';
         inputComment.value = '';
-        setTimeout(clearInputComment, 1500);
+        setTimeout(clearInputs, 1500);
 
     } else {
         // Заглушка на время отправки коммента на сервер
