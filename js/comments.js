@@ -1,28 +1,19 @@
-import { delay } from "./service-functions.js";
-import { safeInput } from "./service-functions.js";
-import { getDate } from "./service-functions.js";
+import { delay, safeInput, getDate, responseHandler } from "./service-functions.js";
 
 // Объект комментариев со свойствами и методами
-const comments = {
+export const comments = {
     comments: [],
+
     get: function () {
         return fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments')
-            .then(response => {
-                switch (response.status) {
-                    case 200:
-                        return response.json();
-
-                    case 500:
-                        throw new Error('Server is broken');
-                }
-            })
+            .then(response => responseHandler(response))
 
             .then(responseData => {
                 this.comments = responseData.comments;
                 this.render();
 
             }).catch(error => {
-                console.log(error.message);
+                console.warn(error);
                 switch (error.message) {
                     case 'Server is broken':
                         alert('Сервер сломался, попробуй позже');
@@ -33,6 +24,7 @@ const comments = {
                 }
             });
     },
+
     render: //Отрисовать, при true аргументе рисует заглушку
         function (isFirstOpen = 0) {
             const commentsList = document.querySelector('ul.comments');
@@ -75,6 +67,7 @@ const comments = {
                 this.addListener();
             }
         },
+
     addListener: // Делегирование на один листенер различных таргетов
         function () {
             const currentComments = document.querySelectorAll('li.comment');
@@ -92,6 +85,7 @@ const comments = {
                 })
             }
         },
+
     replyComment:       //Ответ на комментарий в виде цитаты
         function (index) {
             const inputComment = document.querySelector('.add-form-text');
@@ -99,15 +93,18 @@ const comments = {
                 '\n' + this.comments[index].author.name + '⟫';
             this.render();
         },
+
     makeQuote: function (str) {
         return str.replaceAll('⟪', '<blockquote class="blockquote">')
             .replaceAll('⟫', '</blockquote>');
     },
+
     delete:
         function (index) {
             this.comments.splice(index, 1);
             this.render();
         },
+
     like:
         function (index) {
             const currentLikeButton = document.querySelectorAll('.like-button')[index];
@@ -124,6 +121,7 @@ const comments = {
                     this.render();
                 })
         },
+
     edit: // Пока не работает, ждем возможностей от API
         function (index) {
 
@@ -141,5 +139,3 @@ const comments = {
             this.render();
         }
 }
-
-export { comments };

@@ -1,7 +1,6 @@
-import { safeInput } from "./service-functions.js";
-import { comments } from "./comments.js";
+import { safeInput, responseHandler } from "./service-functions.js";
 // Объект формы добавления комментариев со свойствами и методами
-const addForm = {
+export const addForm = {
     formElement: document.querySelector('.add-form'),
     stub: document.querySelector('.stub'),
     inputName: document.querySelector('input.add-form-name'),
@@ -69,52 +68,37 @@ const addForm = {
                             forceError: true,
                         })
 
-                    }).then(response => {
-                        switch (response.status) {
+                    }).then(response => responseHandler(response))
 
-                            case 201:
-                                response.json().then(message => console.log(message));
-                                return comments.get();
+                        .then(() => {
+                            // console.log(responseData);
+                            addForm.toggleStub(0);
+                            addForm.inputName.value = '';
+                            addForm.inputComment.value = '';
 
-                            case 400:
-                                throw new Error('Short value');
+                        }).catch(error => {
+                            console.warn(error);
+                            switch (error.message) {
 
-                            case 500:
-                                console.warn('Server is broken');
-                                postComment();
-                                throw new Error('Server is broken');
-                        }
+                                case 'Short value':
+                                    alert('Что-то пошло не так:\n' +
+                                        'Имя или текст не должны быть короче 3 символов\n');
+                                    addForm.toggleStub(0);
+                                    break;
 
-                    }).then(() => {
-                        // console.log(responseData);
-                        addForm.toggleStub(0);
-                        addForm.inputName.value = '';
-                        addForm.inputComment.value = '';
+                                case 'Server is broken':
+                                    postComment();
+                                    addForm.toggleStub(0);
+                                    break;
 
-                    }).catch(error => {
-                        console.warn(error);
-                        switch (error.message) {
-
-                            case 'Short value':
-                                alert('Что-то пошло не так:\n' +
-                                    'Имя или текст не должны быть короче 3 символов\n');
-                                addForm.toggleStub(0);
-                                break;
-
-                            case 'Server is broken':
-                                addForm.toggleStub(0);
-                                break;
-
-                            case 'Failed to fetch':
-                                alert('Кажется, у вас сломался интернет, попробуйте позже');
-                                addForm.toggleStub(0);
-                                break;
-                        }
-                    });
+                                case 'Failed to fetch':
+                                    alert('Кажется, у вас сломался интернет, попробуйте позже');
+                                    addForm.toggleStub(0);
+                                    break;
+                            }
+                        });
                 }
                 postComment();
             }
         },
 }
-
-export { addForm };

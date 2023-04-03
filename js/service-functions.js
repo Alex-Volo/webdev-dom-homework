@@ -1,3 +1,4 @@
+import { comments } from "./comments.js";
 // Функции либо общие, либо не относящиеся ни к какому объекту.
 export function safeInput(str) {
     return str.replaceAll("&", "&amp;")
@@ -24,4 +25,21 @@ export function getDate(date) {
     }
     const newDate = new Date(date);
     return newDate.toLocaleString('ru-RU', options).replace(',', '');
+}
+
+export function responseHandler(response) {
+    switch (response.status) {
+        case 200:
+            return response.json();
+
+        case 201:
+            response.json().then(message => console.log(message));
+        return comments.get();
+
+        case 400:
+            throw new Error('Short value');
+
+        case 500:
+            throw new Error('Server is broken');
+    }
 }
