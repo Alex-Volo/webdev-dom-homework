@@ -6,12 +6,12 @@ export const addForm = {
     inputName: document.querySelector('input.add-form-name'),
     inputComment: document.querySelector('.add-form-text'),
     render:
-        function (loadingStatus = 0) {
+        function (loadingStatus = 'addForm') {
             const addFormElement = document.querySelector('div.add-form');
 
             switch (loadingStatus) {
 
-                case 1:
+                case 'loading':
                     addFormElement.innerHTML = ` 
             <div style="display: flex;">Комментарий загружается...</div>
             <svg class="spinner" viewBox="0 0 50 50">
@@ -21,7 +21,7 @@ export const addForm = {
             `
                     break;
 
-                default: addFormElement.innerHTML = `    
+                case 'addForm': addFormElement.innerHTML = `    
             <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
             <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
             id="input-comment"></textarea>
@@ -31,11 +31,18 @@ export const addForm = {
                     // Добавляю событие на клик по кнопке добавить
                     // И на нажатие Enter
                     this.addListeners();
-                // const buttonAddComment = document.querySelector('button.add-form-button');
-                // document.addEventListener('keyup', (e) => {
-                //     if (e.code == 'Enter') this.addComment();
-                // });
-                // buttonAddComment.addEventListener('click', this.addComment);
+                    break;
+
+                case 'auth': 
+                addFormElement.classList.remove('add-form');
+                addFormElement.innerHTML = `
+                <p class="auth">Чтобы добавить комментарий <a href="#">авторизуйтесь</a></p>
+                `
+                document.querySelector('.auth>a').addEventListener('click', () => {
+                    renderAuthForm();
+                })
+                break;
+
             }
         },
     // Функция переключает отображение заглушки и формы
@@ -65,6 +72,9 @@ export const addForm = {
             const inputName = document.querySelector('input.add-form-name');
             const inputComment = document.querySelector('.add-form-text');
             const currentDate = new Date;
+            const name = inputName.value;
+            const comment = inputComment.value;
+
             // Таймаут красного фона на полях
             function clearInputs() {
                 inputName.classList.remove('error__name')
@@ -87,7 +97,7 @@ export const addForm = {
 
             } else {
                 // Заглушка на время отправки коммента на сервер
-                addForm.render(1);
+                addForm.render('loading');
 
                 function postComment() {
                     fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments', {
@@ -106,13 +116,11 @@ export const addForm = {
                     }).then(response => responseHandler(response))
 
                         .then(() => {
-                            // console.log(responseData);
-                            // addForm.render();
                             inputName.value = '';
                             inputComment.value = '';
 
                         })
-                        .then(() => addForm.render())
+                        .then(() => addForm.render('addForm'))
                         .catch(error => {
                             console.warn(error);
                             switch (error.message) {
@@ -120,17 +128,20 @@ export const addForm = {
                                 case 'Short value':
                                     alert('Что-то пошло не так:\n' +
                                         'Имя или текст не должны быть короче 3 символов\n');
-                                    addForm.render();
+                                    addForm.render('addForm');
+                                    document.querySelector('input.add-form-name').value = name;
+                                    document.querySelector('.add-form-text').value = comment;
                                     break;
 
                                 case 'Server is broken':
                                     postComment();
-                                    // addForm.render();
                                     break;
 
                                 case 'Failed to fetch':
                                     alert('Кажется, у вас сломался интернет, попробуйте позже');
-                                    addForm.render();
+                                    addForm.render('addForm');
+                                    document.querySelector('input.add-form-name').value = name;
+                                    document.querySelector('.add-form-text').value = comment;
                                     break;
                             }
                         });
@@ -140,19 +151,29 @@ export const addForm = {
         },
 }
 
-// function responseHandler(response) {
-//     switch (response.status) {
-//         case 200:
-//             return response.json();
+function renderAuthForm() {
+    const container = document.querySelector('body>div.container');
+    let isLoginForm = true;
+    const renderForm = () => {
+        container.innerHTML = `
+        <div class="auth-form add-form" id="auth-form">
+            ${isLoginForm ? '' : `
+            <input type="text" class="auth-form-name" placeholder="Введите ваше имя" id="login-name">
+            `}
 
-//         case 201:
-//             response.json().then(message => console.log(message));
-//             return comments.get();
-
-//         case 400:
-//             throw new Error('Short value');
-
-//         case 500:
-//             throw new Error('Server is broken');
-//     }
-// }
+            <input type="text" class="auth-form-name" placeholder="Введите ваш логин" id="login-login">
+            <input type="password" class="auth-form-name" placeholder="Введите ваш пароль" id="login-password">
+            
+            <button class="add-form-button" id="button-login">${isLoginForm ? 'Войти' : 'Зарегистрироваться'}</button>
+            
+            <a href=#>${isLoginForm ? 'Зарегистрироваться' : 'Войти'}</a>
+            
+        </div>
+            `
+        document.querySelector('#button-login+a').addEventListener('click', () => {
+            isLoginForm = !isLoginForm;
+            renderForm();
+        })
+    }
+    renderForm();
+}
