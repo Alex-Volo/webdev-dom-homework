@@ -4,8 +4,13 @@ import { delay, safeInput, getDate, responseHandler } from "./service-functions.
 export const comments = {
     comments: [],
 
-    get: function () {
-        return fetch('https://webdev-hw-api.vercel.app/api/v1/alex-volo/comments')
+    get: function (token) {
+        return fetch('https://webdev-hw-api.vercel.app/api/v2/alex-volo/comments', {
+            method: 'GET',
+            headers: {
+                athorization: token,
+            }
+        })
             .then(response => responseHandler(response))
 
             .then(responseData => {
@@ -26,7 +31,7 @@ export const comments = {
     },
 
     render: //Отрисовать, при true аргументе рисует заглушку
-        function (isFirstOpen = 0) {
+        function (isFirstOpen = 0, token) {
             const commentsList = document.querySelector('ul.comments');
             if (isFirstOpen) {
                 commentsList.innerHTML = `
