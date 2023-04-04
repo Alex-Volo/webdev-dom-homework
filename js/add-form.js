@@ -7,7 +7,7 @@ export const addForm = {
     inputName: document.querySelector('input.add-form-name'),
     inputComment: document.querySelector('.add-form-text'),
     render:
-        function (loadingStatus = 'addForm') {
+        function (loadingStatus = 'addForm', user = '') {
             const addFormElement = document.querySelector('div.add-form');
 
             switch (loadingStatus) {
@@ -29,6 +29,11 @@ export const addForm = {
             <div class="add-form-row">
                 <button class="add-form-button" id="button-add-comment">Написать</button>
             </div>`;
+            if(user) {
+                const nameInput = document.getElementById('input-name');
+                nameInput.value = user;
+                nameInput.disabled = true;
+            }
                     // Добавляю событие на клик по кнопке добавить
                     // И на нажатие Enter
                     this.addListeners();
@@ -195,8 +200,9 @@ function renderAuthForm() {
                         console.log(user);
                         console.log(user.user.token);
                         const token = `Bearer ${user.user.token}`;
+                        const user1 = user.user.name;
                         comments.get(token);
-                        addForm.render('addForm');
+                        addForm.render('addForm', user1 );
                     })
                 }
             })
