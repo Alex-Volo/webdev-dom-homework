@@ -44,10 +44,10 @@ export function renderAuthForm({ setToken, setUser }) {
                             console.log(user.user.token);
                             const newToken = `Bearer ${user.user.token}`;
                             setToken(newToken);
-                            const newUser = `Be ${user.user.name}`;
+                            const newUser = user.user.name;
                             setUser(newUser);
                             getAndRenderComments(newToken);
-                            renderAddForm('addForm', newUser);
+                            renderAddForm('addForm');
                         })
                 }
             })
@@ -71,7 +71,7 @@ export function renderAuthForm({ setToken, setUser }) {
                             const newUser = user.user.name;
                             setUser(newUser);
                             getAndRenderComments(newToken);
-                            renderAddForm('addForm', newUser);
+                            renderAddForm('addForm');
                         })
                 }
             });
@@ -110,7 +110,7 @@ function registerUser({ login, password, name }) {
     })
         .then((response) => {
             if (response.status == 400) {
-                throw new Error('Такой пользователь уже существует');
+                throw new Error('Пользователь с таким логином уже существует');
             }
             return response.json();
         })

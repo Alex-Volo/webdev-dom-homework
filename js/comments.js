@@ -24,7 +24,7 @@ function getAndRenderComments(token) {
 
 
 //Отрисовать, при true аргументе рисует заглушку
-function renderComments(isFirstOpen = 0, token) {
+function renderComments(isFirstOpen = 0, token, currentUser) {
     const commentsList = document.querySelector('ul.comments');
     if (isFirstOpen) {
         commentsList.innerHTML = `

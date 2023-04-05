@@ -2,14 +2,11 @@ import { renderAuthForm } from "./auth.js";
 import { safeInput } from "./service-functions.js";
 import { postComment } from "./API.js";
 
-function cons () {
-    console.log(currentUser)
-}
 // Объект формы добавления комментариев со свойствами и методами
 let token = null;
 let currentUser = null;
 
-function renderAddForm(form = 'addForm', currentUser) {
+function renderAddForm(form = 'addForm') {
     const addFormElement = document.querySelector('div.add-form');
 
     switch (form) {
@@ -37,6 +34,7 @@ function renderAddForm(form = 'addForm', currentUser) {
                 nameInput.value = currentUser;
                 
             }
+
             // Добавляю событие на клик по кнопке добавить
             // И на нажатие Enter
             initAddFormListeners();
@@ -49,13 +47,12 @@ function renderAddForm(form = 'addForm', currentUser) {
         `
             document.querySelector('.auth>a').addEventListener('click', () => {
                 renderAuthForm({ setToken: (newToken) => { token = newToken }, setUser: (newUser) => { currentUser = newUser } });
-                setTimeout(cons, 10000);
             })
-            
-            return;
+            break;
 
     }
 };
+
 function validate(input, text) {
     if (input.value === '' || input.value === '\n') {
         input.classList.add('error__name');
@@ -91,31 +88,30 @@ function addComment() {
     if (validate(inputName, 'ваше имя') && validate(inputComment, 'ваш комментарий')) {
         console.log(currentUser, 'После валидации');
         // Заглушка на время отправки коммента на сервер
-        renderAddForm('loading', currentUser);
+        renderAddForm('loading');
         console.log(currentUser, 'После загрузки addform loading');
 
         postComment(safeInput(name), safeInput(comment), currentDate, token)
             .then(() => {
                 console.log(currentUser, 'После пост коммент');
-                // inputName.value = '';
+
                 inputComment.value = '';
             })
 
             .then(() => {
-                renderAddForm('addForm', currentUser);
-                console.log(currentUser, 'После рендера addform')
+                renderAddForm('addForm');
             })
             .catch(error => {
                 console.warn(error);
                 switch (error.message) {
                     case 'Bad authorization':
-                        renderAuthForm({ setToken: (newToken) => { token = newToken } });
+                        renderAuthForm({ setToken: (newToken) => { token = newToken }, setUser: (newUser) => { currentUser = newUser }  });
                         break;
 
                     case 'Short value':
                         alert('Что-то пошло не так:\n' +
                             'Имя или текст не должны быть короче 3 символов\n');
-                        renderAddForm('addForm', currentUser);
+                        renderAddForm('addForm');
                         document.querySelector('input.add-form-name').value = name;
                         document.querySelector('.add-form-text').value = comment;
                         break;
@@ -126,7 +122,7 @@ function addComment() {
 
                     case 'Failed to fetch':
                         alert('Кажется, у вас сломался интернет, попробуйте позже');
-                        renderAddForm('addForm', currentUser);
+                        renderAddForm('addForm');
                         document.querySelector('input.add-form-name').value = name;
                         document.querySelector('.add-form-text').value = comment;
                         break;
