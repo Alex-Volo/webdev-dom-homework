@@ -16,18 +16,18 @@ function getComments(token) {
             }
         })
 }
+// На будущее, когда будет больше свободного времени
+// function catchErrors(error) {
+//     console.warn(error);
+//     switch (error.message) {
+//         case 'Server is broken':
+//             alert('Сервер сломался, попробуй позже');
+//             break;
 
-export function catchErrors(error) {
-    console.warn(error);
-    switch (error.message) {
-        case 'Server is broken':
-            alert('Сервер сломался, попробуй позже');
-            break;
-
-        case 'Failed to fetch':
-            alert('Кажется, у вас сломался интернет, попробуйте позже');
-    }
-}
+//         case 'Failed to fetch':
+//             alert('Кажется, у вас сломался интернет, попробуйте позже');
+//     }
+// }
 
 function postComment(name, comment, date, token) {
     return fetch('https://webdev-hw-api.vercel.app/api/v2/alex-volo/comments', {

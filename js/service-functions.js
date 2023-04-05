@@ -1,13 +1,12 @@
-import { comments } from "./comments.js";
 // Функции либо общие, либо не относящиеся ни к какому объекту.
-export function safeInput(str) {
+function safeInput(str) {
     return str.replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;");
 }
 
-export function delay(interval = 300) {
+function delay(interval = 300) {
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve();
@@ -15,7 +14,7 @@ export function delay(interval = 300) {
     });
 }
 
-export function getDate(date) {
+function getDate(date) {
     const options = {
         year: '2-digit',
         month: 'numeric',
@@ -27,3 +26,18 @@ export function getDate(date) {
     return newDate.toLocaleString('ru-RU', options).replace(',', '');
 }
 
+function validate(input, text) {
+    if (input.value === '' || input.value === '\n') {
+        input.classList.add('error__name');
+        input.placeholder = 'Поле не может быть пустым!';
+        input.value = '';
+        setTimeout(() => {
+            input.classList.remove('error__name')
+            input.placeholder = `Введите ${text}`;
+        }, 1500);
+    } else {
+        return true;
+    }
+}
+
+export { validate, getDate, delay, safeInput };

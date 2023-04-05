@@ -1,5 +1,5 @@
 import { delay, getDate, } from "./service-functions.js";
-import { getComments, catchErrors } from "./API.js"
+import { getComments } from "./API.js"
 let comments = [];
 
 function getAndRenderComments(token) {
@@ -7,7 +7,7 @@ function getAndRenderComments(token) {
         .then(responseData => {
             comments = responseData.comments;
             console.log(comments);
-            renderComments();
+            renderComments(0, token);
         })
         .catch(error => {
             console.warn(error);
@@ -24,7 +24,7 @@ function getAndRenderComments(token) {
 
 
 //Отрисовать, при true аргументе рисует заглушку
-function renderComments(isFirstOpen = 0, token, currentUser) {
+function renderComments(isFirstOpen = 0, token) {
     const commentsList = document.querySelector('ul.comments');
     if (isFirstOpen) {
         commentsList.innerHTML = `
@@ -62,22 +62,23 @@ function renderComments(isFirstOpen = 0, token, currentUser) {
     </li >`
         }, '');
 
-        addCommentListener();
+        addCommentListener(token);
     }
 };
 
 
-function addCommentListener() {
+function addCommentListener(token) {
     const currentComments = document.querySelectorAll('li.comment');
 
     for (const comment of currentComments) {
         comment.addEventListener('click', (e) => {
             const index = comment.dataset.index;
+            const currentToken = token;
             const likeButton = e.currentTarget.querySelector('button.like-button');
             const deleteButton = e.currentTarget.querySelector('.delete-button');
 
             if (e.target === likeButton) { like(index); return; }
-            if (e.target === deleteButton) { deleteComment(index); return }
+            if (e.target === deleteButton) { deleteComment(index, currentToken); return }
 
             replyComment(index);
         })
@@ -98,9 +99,27 @@ function makeQuote(str) {
 };
 
 
-function deleteComment(index) {
-    comments.splice(index, 1);
-    renderComments();
+function deleteComment(index, currentToken) {
+    fetch('https://webdev-hw-api.vercel.app/api/v2/alex-volo/comments/' + comments[index].id, {
+        method: "DELETE",
+        headers: {
+            authorization: currentToken,
+        },
+    })
+        .then((response) => {        
+            if(response.status === 200){
+                comments.splice(index, 1);
+                renderComments(0, currentToken);
+                return response.json();
+            }
+        })
+        .catch(error => {
+            console.warn(error);
+            if (error.message = 'Failed to fetch'){
+                alert('Нет соединения с интернетом')
+            }
+        })
+    
 };
 
 function like(index) {

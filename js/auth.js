@@ -1,5 +1,6 @@
 import { renderAddForm } from "./add-form.js";
 import { getAndRenderComments } from "./comments.js";
+import { validate } from "./service-functions.js";
 export function renderAuthForm({ setToken, setUser }) {
     const container = document.querySelector('body>div.container');
     let isLoginForm = true;
@@ -33,9 +34,8 @@ export function renderAuthForm({ setToken, setUser }) {
             document.getElementById('button-login').addEventListener('click', () => {
                 const loginInput = document.getElementById('login-login');
                 const passwordInput = document.getElementById('login-password');
-                if (!loginInput.value || !passwordInput.value) {
-                    alert('Поля не должны быть пустыми');
-                } else {
+
+                if (validate(loginInput, 'ваш логин') && validate(passwordInput, 'ваш пароль')) {
                     const login = loginInput.value;
                     const password = passwordInput.value;
                     loginUser({ login, password })
@@ -56,9 +56,7 @@ export function renderAuthForm({ setToken, setUser }) {
                 const nameInput = document.getElementById('login-name');
                 const loginInput = document.getElementById('login-login');
                 const passwordInput = document.getElementById('login-password');
-                if (!loginInput.value || !passwordInput.value || !nameInput.value) {
-                    alert('Поля не должны быть пустыми');
-                } else {
+                if (validate(nameInput, 'ваше имя') && validate(loginInput, 'ваш логин') && validate(passwordInput, 'ваш пароль')) {
                     const name = nameInput.value;
                     const login = loginInput.value;
                     const password = passwordInput.value;

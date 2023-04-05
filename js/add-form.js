@@ -1,5 +1,5 @@
 import { renderAuthForm } from "./auth.js";
-import { safeInput } from "./service-functions.js";
+import { safeInput, validate } from "./service-functions.js";
 import { postComment } from "./API.js";
 
 // Объект формы добавления комментариев со свойствами и методами
@@ -53,19 +53,19 @@ function renderAddForm(form = 'addForm') {
     }
 };
 
-function validate(input, text) {
-    if (input.value === '' || input.value === '\n') {
-        input.classList.add('error__name');
-        input.placeholder = 'Поле не может быть пустым!';
-        input.value = '';
-        setTimeout(() => {
-            input.classList.remove('error__name')
-            input.placeholder = `Введите ${text}`;
-        }, 1500);
-    } else {
-        return true;
-    }
-}
+// function validate(input, text) {
+//     if (input.value === '' || input.value === '\n') {
+//         input.classList.add('error__name');
+//         input.placeholder = 'Поле не может быть пустым!';
+//         input.value = '';
+//         setTimeout(() => {
+//             input.classList.remove('error__name')
+//             input.placeholder = `Введите ${text}`;
+//         }, 1500);
+//     } else {
+//         return true;
+//     }
+// }
 
 function initAddFormListeners() {
     const buttonAddComment = document.getElementById('button-add-comment');
