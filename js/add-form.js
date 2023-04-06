@@ -5,6 +5,8 @@ import { postComment } from "./API.js";
 // Объект формы добавления комментариев со свойствами и методами
 let token = null;
 let currentUser = null;
+console.log(token);
+console.log(currentUser);
 
 function renderAddForm(form = 'addForm') {
     const addFormElement = document.querySelector('div.add-form');
@@ -32,7 +34,7 @@ function renderAddForm(form = 'addForm') {
                 const nameInput = document.getElementById('input-name');
                 nameInput.disabled = true;
                 nameInput.value = currentUser;
-                
+
             }
 
             // Добавляю событие на клик по кнопке добавить
@@ -105,7 +107,7 @@ function addComment() {
                 console.warn(error);
                 switch (error.message) {
                     case 'Bad authorization':
-                        renderAuthForm({ setToken: (newToken) => { token = newToken }, setUser: (newUser) => { currentUser = newUser }  });
+                        renderAuthForm({ setToken: (newToken) => { token = newToken }, setUser: (newUser) => { currentUser = newUser } });
                         break;
 
                     case 'Short value':

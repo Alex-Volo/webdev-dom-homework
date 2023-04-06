@@ -40,12 +40,15 @@ export function renderAuthForm({ setToken, setUser }) {
                     const password = passwordInput.value;
                     loginUser({ login, password })
                         .then((user) => {
-                            console.log(user);
-                            console.log(user.user.token);
+
                             const newToken = `Bearer ${user.user.token}`;
+                            localStorage.setItem('currentToken', newToken);
                             setToken(newToken);
+
                             const newUser = user.user.name;
+                            localStorage.setItem('currentUser', newUser);
                             setUser(newUser);
+                            
                             getAndRenderComments(newToken);
                             renderAddForm('addForm');
                         })
