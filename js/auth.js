@@ -88,10 +88,14 @@ function loginUser({ login, password }) {
         }),
     })
         .then((response) => {
-            if (response.status == 400) {
-                throw new Error('Неверный логин или пароль');
+            switch (response.status) {
+                case 201:
+                    return response.json();
+                case 400:
+                    throw new Error('Неверный логин или пароль');
+                case 500:
+                    throw new Error('Server is broken');
             }
-            return response.json();
         })
         .catch(error => alert(error.message))
 }
@@ -107,8 +111,13 @@ function registerUser({ login, password, name }) {
         }),
     })
         .then((response) => {
-            if (response.status == 400) {
-                throw new Error('Пользователь с таким логином уже существует');
+            switch (response.status) {
+                case 201:
+                    return response.json();
+                case 400:
+                    throw new Error('Пользователь с таким логином уже существует');
+                case 500:
+                    throw new Error('Server is broken');
             }
             return response.json();
         })
