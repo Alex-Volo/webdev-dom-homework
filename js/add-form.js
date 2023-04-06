@@ -24,7 +24,10 @@ function renderAddForm(form = 'addForm') {
             break;
 
         case 'addForm': addFormElement.innerHTML = `    
-    <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
+    <div class="user-container">
+    <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" style="display: inline-block" />
+    <a href=# class="logout-button">Выйти</a>
+    </div>
     <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
     id="input-comment"></textarea>
     <div class="add-form-row">
@@ -35,6 +38,9 @@ function renderAddForm(form = 'addForm') {
                 nameInput.disabled = true;
                 nameInput.value = currentUser;
 
+            } else {
+                renderAddForm('auth');
+                return;
             }
 
             // Добавляю событие на клик по кнопке добавить
@@ -55,23 +61,21 @@ function renderAddForm(form = 'addForm') {
     }
 };
 
-// function validate(input, text) {
-//     if (input.value === '' || input.value === '\n') {
-//         input.classList.add('error__name');
-//         input.placeholder = 'Поле не может быть пустым!';
-//         input.value = '';
-//         setTimeout(() => {
-//             input.classList.remove('error__name')
-//             input.placeholder = `Введите ${text}`;
-//         }, 1500);
-//     } else {
-//         return true;
-//     }
-// }
-
 function initAddFormListeners() {
     const buttonAddComment = document.getElementById('button-add-comment');
-    buttonAddComment.addEventListener('click', addComment);
+    const logout = document.querySelector('.logout-button');
+    const addForm = document.querySelector('.add-form');
+    addForm.addEventListener('click', (event) => {
+        if (event.target === buttonAddComment) {
+            addComment();
+            return;
+        }
+        if (event.target === logout) {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentToken');
+            renderAddForm('auth');
+        }
+    });
 
     document.addEventListener('keyup', (e) => {
         if (e.code == 'Enter') addComment();

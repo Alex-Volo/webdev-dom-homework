@@ -6,8 +6,8 @@
 
 import {  renderComments, getAndRenderComments } from "./comments.js";
 import { renderAddForm } from "./add-form.js";
-let token = null;
-// let token = localStorage.getItem('currentToken');
+// let token = null;
+let token = localStorage.getItem('currentToken');
 renderComments(1);//Заглушка на комментариях
 if(!token){
      renderAddForm('auth');

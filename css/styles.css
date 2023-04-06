@@ -104,7 +104,11 @@ body {
   border-radius: 8px;
   border: none;
 }
-
+.user-container {
+  display: flex;
+  align-items: center;
+  gap: 70px;
+}
 .add-form-name {
   width: 300px;
   padding: 11px 22px;
