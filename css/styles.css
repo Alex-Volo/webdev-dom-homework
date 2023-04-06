@@ -191,15 +191,16 @@ font-size: 16px;
   text-align: center;
   font-size: 20px;
 }
-.auth a {
+.auth a, .auth a:visited, .logout-button, .logout-button:visited {
+  font-size: 22px;
   color: #FFFFFF;
   text-decoration: underline;
 }
-.auth a:hover {  
+.auth a:hover .logout-button:hover{  
   text-shadow: 0px 0px 2px white;
   cursor: pointer;
 }
-  
+
 .auth-form {
   display: flex;
   flex-direction: column;

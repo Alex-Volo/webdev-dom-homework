@@ -33,10 +33,10 @@ function renderAddForm(form = 'addForm') {
     <div class="add-form-row">
         <button class="add-form-button" id="button-add-comment">Написать</button>
     </div>`;
-            if (currentUser) {
+            if (localStorage.getItem('currentUser')) {
                 const nameInput = document.getElementById('input-name');
                 nameInput.disabled = true;
-                nameInput.value = currentUser;
+                nameInput.value = localStorage.getItem('currentUser');
 
             } else {
                 renderAddForm('auth');
@@ -54,7 +54,7 @@ function renderAddForm(form = 'addForm') {
         <p class="auth">Чтобы добавить комментарий <a href="#">авторизуйтесь</a></p>
         `
             document.querySelector('.auth>a').addEventListener('click', () => {
-                renderAuthForm({ setToken: (newToken) => { token = newToken }, setUser: (newUser) => { currentUser = newUser } });
+                renderAuthForm({ setToken: (newToken) => { token = localStorage.getItem('currentToken') }, setUser: (newUser) => { currentUser = localStorage.getItem('currentUser') } });
             })
             break;
 

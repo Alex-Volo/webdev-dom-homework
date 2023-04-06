@@ -1,6 +1,7 @@
 import { renderAddForm } from "./add-form.js";
 import { getAndRenderComments } from "./comments.js";
 import { validate } from "./service-functions.js";
+
 export function renderAuthForm({ setToken, setUser }) {
     const container = document.querySelector('body>div.container');
     let isLoginForm = true;
