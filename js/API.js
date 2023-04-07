@@ -4,7 +4,7 @@ function getComments(token) {
     return fetch('https://webdev-hw-api.vercel.app/api/v2/alex-volo/comments', {
         method: 'GET',
         headers: {
-            athorization: token,
+            authorization: token,
         }
     })
         .then(response => {
