@@ -33,6 +33,7 @@ function renderAddForm(form = 'addForm') {
         <button class="add-form-button" id="button-add-comment">Написать</button>
     </div>`;
             if (localStorage.getItem('currentUser')) {
+                token = localStorage.getItem('currentToken');
                 const nameInput = document.getElementById('input-name');
                 nameInput.disabled = true;
                 nameInput.value = localStorage.getItem('currentUser');
