@@ -5,8 +5,7 @@ import { postComment } from "./API.js";
 // Объект формы добавления комментариев со свойствами и методами
 let token = null;
 let currentUser = null;
-console.log(token);
-console.log(currentUser);
+
 
 function renderAddForm(form = 'addForm') {
     const addFormElement = document.querySelector('div.add-form');
@@ -92,15 +91,11 @@ function addComment() {
 
     // Валидация
     if (validate(inputName, 'ваше имя') && validate(inputComment, 'ваш комментарий')) {
-        console.log(currentUser, 'После валидации');
         // Заглушка на время отправки коммента на сервер
         renderAddForm('loading');
-        console.log(currentUser, 'После загрузки addform loading');
 
         postComment(safeInput(name), safeInput(comment), currentDate, token)
             .then(() => {
-                console.log(currentUser, 'После пост коммент');
-
                 inputComment.value = '';
             })
 

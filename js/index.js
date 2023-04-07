@@ -16,4 +16,4 @@ if(!token){
      renderAddForm('addForm')
 }
 
-getAndRenderComments();// Получаем с сервера и отрисовываем
+getAndRenderComments(token);// Получаем с сервера и отрисовываем

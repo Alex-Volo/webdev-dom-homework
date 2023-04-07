@@ -189,14 +189,14 @@ font-size: 16px;
 .auth{
   background: transparent;
   text-align: center;
-  font-size: 20px;
+  font-size: 22px;
 }
 .auth a, .auth a:visited, .logout-button, .logout-button:visited {
   font-size: 22px;
   color: #FFFFFF;
   text-decoration: underline;
 }
-.auth a:hover .logout-button:hover{  
+.auth a:hover, .logout-button:hover{  
   text-shadow: 0px 0px 2px white;
   cursor: pointer;
 }

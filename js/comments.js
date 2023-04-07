@@ -77,7 +77,7 @@ function addCommentListener(token) {
             const likeButton = e.currentTarget.querySelector('button.like-button');
             const deleteButton = e.currentTarget.querySelector('.delete-button');
 
-            if (e.target === likeButton) { like(index); return; }
+            if (e.target === likeButton) { like(index, currentToken); return; }
             if (e.target === deleteButton) { deleteComment(index, currentToken); return }
 
             replyComment(index);
@@ -106,35 +106,51 @@ function deleteComment(index, currentToken) {
             authorization: currentToken,
         },
     })
-        .then((response) => {        
-            if(response.status === 200){
+        .then((response) => {
+            if (response.status === 200) {
                 comments.splice(index, 1);
                 renderComments(0, currentToken);
-                return response.json();
+                // return response.json();
             }
         })
         .catch(error => {
             console.warn(error);
-            if (error.message = 'Failed to fetch'){
+            if (error.message = 'Failed to fetch') {
                 alert('Нет соединения с интернетом')
             }
         })
-    
+
 };
 
-function like(index) {
+function like(index, currentToken) {
     const currentLikeButton = document.querySelectorAll('.like-button')[index];
-    currentLikeButton.classList.add('loading-like')
-    delay(2000)
-        .then(() => {
-            if (comments[index].isLiked) {
-                comments[index].isLiked = false;
-                comments[index].likes -= 1;
-            } else {
-                comments[index].isLiked = true;
-                comments[index].likes += 1;
+    const commentId = comments[index].id;
+    currentLikeButton.classList.add('loading-like');
+    fetch('https://webdev-hw-api.vercel.app/api/v2/alex-volo/comments/' +
+        commentId + '/toggle-like', {
+        method: "POST",
+        headers: {
+            authorization: currentToken,
+        },
+    })
+        .then((response) => {
+            if (response.status === 200) {
+                if (comments[index].isLiked) {
+                    comments[index].isLiked = false;
+                    comments[index].likes -= 1;
+                } else {
+                    comments[index].isLiked = true;
+                    comments[index].likes += 1;
+                }
+                renderComments(0, currentToken);
+                // getAndRenderComments(currentToken);
             }
-            renderComments();
+        })
+        .catch(error => {
+            console.warn(error);
+            if (error.message = 'Failed to fetch') {
+                alert('Нет соединения с интернетом')
+            }
         })
 };
 
