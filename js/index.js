@@ -1,9 +1,19 @@
-// - У меня депрессия и ничего не хочется.
-// - Тебе надо срочно показаться бармену!
+// Сначала отображает возможность авторизоваться
+// Потом логин
+// После обновления страницы эддформ с заполненным юзером и токеном
 
-import { comments } from "./comments.js";
-import { addForm } from "./add-form.js";
 
-comments.render(1);//Заглушка на комментариях
-addForm.addListeners(); //Добавляю обработчики событий на форму
-comments.get();// Получаем с сервера и отрисовываем
+
+import {  renderComments, getAndRenderComments } from "./comments.js";
+import { renderAddForm } from "./add-form.js";
+// let token = null;
+let token = localStorage.getItem('currentToken');
+console.log(token);
+renderComments(1);//Заглушка на комментариях
+if(!token){
+     renderAddForm('auth');
+} else {
+     renderAddForm('addForm')
+}
+
+getAndRenderComments(token);// Получаем с сервера и отрисовываем
