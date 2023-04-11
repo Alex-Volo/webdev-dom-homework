@@ -16,13 +16,7 @@ function delay(interval = 300) {
 }
 
 function getDate(date) {
-    const options = {
-        year: '2-digit',
-        month: 'numeric',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    }
+
     const newDate = new Date(date);
     // return newDate.toLocaleString('ru-RU', options).replace(',', '');
     return format(newDate, 'yyyy-MM-dd hh.mm.ss');
