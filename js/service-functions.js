@@ -1,4 +1,5 @@
 // Функции либо общие, либо не относящиеся ни к какому объекту.
+import { format } from "date-fns";
 function safeInput(str) {
     return str.replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
@@ -15,15 +16,10 @@ function delay(interval = 300) {
 }
 
 function getDate(date) {
-    const options = {
-        year: '2-digit',
-        month: 'numeric',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    }
+
     const newDate = new Date(date);
-    return newDate.toLocaleString('ru-RU', options).replace(',', '');
+    // return newDate.toLocaleString('ru-RU', options).replace(',', '');
+    return format(newDate, 'yyyy-MM-dd hh.mm.ss');
 }
 
 function validate(input, text) {
